@@ -15,6 +15,7 @@
     display: flex;
     justify-content: center;
     z-index: 99;
+    height: 4.5rem;
     .page{
         width: 30%;
         max-width: 10rem;

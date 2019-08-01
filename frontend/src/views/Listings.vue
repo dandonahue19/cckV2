@@ -1,27 +1,20 @@
 <template>
   <div class="listings">
-    <div class="listing" v-for="listing in listings" :key="listing.id">
+    <div 
+      v-for="listing in listings"
+      class="listing" 
+      :class="{'active': listing == selectedListing}"
+      :key="listing.id"
+      @click="selectListing(listing)">
       <div class="images">
         <img src="@/assets/carHeader.jpg"/>
       </div>
       <div class="text">
         <div class="header">
           <h2>{{listing.header}}</h2>
-          <h3>{{listing.make}} {{listing.model}} {{listing.year}}</h3>
+          <h3>{{listing.make_name}} {{listing.model_name}} {{listing.year}}</h3>
         </div>
         <div class="content">
-          <div class="info-item">
-            <h3>Drive :</h3>
-            <h3>{{listing.drive}}</h3>
-          </div>
-          <div class="info-item">
-            <h3>Transmission :</h3>
-            <h3>{{listing.transmission}}</h3>
-          </div>
-          <div class="info-item">
-            <h3>Fuel :</h3>
-            <h3>{{listing.fuel}}</h3>
-          </div>
           <h1>${{listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}}</h1>
         </div>
       </div>
@@ -36,6 +29,7 @@
   align-items: center;
   flex-wrap: wrap;
   .listing{
+    cursor: pointer;
     width: calc(100% - 1rem);
     max-width: 700px;
     height: 33vh;
@@ -43,26 +37,38 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #272727;
+    border-radius: .5rem;
+    background: radial-gradient(circle at top left, rgba(64,63,63,1) 0%, rgba(39,39,39,1) 53%, rgba(34,34,34,1) 93%);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    transition: all .5s ease-in-out;
+    height: 20rem;
+    &.active{
+      height: calc(100vh - 4.5rem);
+    }
     .images{
       max-width: 50%;
-      height: 100%;
-      overflow: hidden;
+      height: 85%;
       img{
         max-width:100%;
         height: 100%;
+        border-radius: .5rem;
+        margin-left: -1.5rem;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
       }
     }
     .text{
-      max-width: 50%;
-      height:100%;
+      max-width: 60%;
       padding: 1rem;
       margin: auto;
       .header{
         width: 100%;
         h2{
           border-bottom: 1px solid white;
+          font-size: 1.75rem;
+          padding: .5rem;
+        }
+        h3{
+          padding: .5rem;
         }
       }
       .content{
@@ -72,24 +78,11 @@
         align-content: center;
         flex-wrap: wrap;
         margin: 1rem auto;
-        .info-item{
-          display: flex;
-          justify-content: center;
-          width: 100%;
-          opacity: .8;
-          h3{
-            width: 50%;
-            margin: .25rem .5rem;
-            &:first-child{
-              text-align: right;
-            }
-          }
-        }
         h1{
           margin: .5rem;
           padding: .5rem 1rem;
           border-radius: 5rem;
-          background-color: #ca1b1b;
+          border: 1px solid #ca1b1b;
           color: white;
         }
       }
@@ -100,34 +93,25 @@
 
 <script>
 // @ is an alias to /src
-
+import axios from 'axios'
 export default {
   name: 'home',
   data (){
     return{
-      listings: [{
-        image: '/img/carHeader.jpg',
-        header: 'Low Mileage, Fleet Maintained',
-        price: 6000,
-        make: 'Ford',
-        model: 'Tarus',
-        year: 2009,
-        mileage: 46000,
-        drive: 'AWD',
-        fuel:'Gas',
-        transmission:'Automatic'
-      },{
-        image: '/img/carHeader.jpg',
-        header: 'Low Mileage, Fleet Maintained',
-        price: 6000,
-        make: 'Ford',
-        model: 'Tarus',
-        year: 2009,
-        mileage: 46000,
-        drive: 'AWD',
-        fuel:'Gas',
-        transmission:'Automatic'
-      }]
+      listings: [],
+      selectedListing: null,
+    }
+  },
+  created(){
+    this.$http.get('vehicles/').then((response) =>{
+      this.listings=response.data
+    })
+  },
+  methods:{
+    selectListing(listing){
+      if(listing){
+        this.selectedListing = listing
+      }
     }
   }
 

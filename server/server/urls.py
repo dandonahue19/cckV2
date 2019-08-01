@@ -15,9 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
+from listings import views
 
-urlpatterns = [
+router = routers.DefaultRouter()
+
+router.register('vehicles', views.VehicleListingsViewSet)
+
+urlpatterns= router.urls
+
+urlpatterns += [
     path('admin/', admin.site.urls),
     path('auth/', obtain_jwt_token)    
 ]
